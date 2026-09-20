@@ -1,0 +1,20 @@
+CarInfo design prototype — supplied asset provenance
+
+rav4.png
+Source: Toyota Hawaii, https://www.toyotahawaii.com/2024RAV4Hybrid.html
+The supplied reference records personal, noncommercial reference use only.
+No additional rights are granted by this bundle. Obtain permission or replace
+the image before any public/commercial launch.
+Source terms: https://www.servco.com/terms-of-use/
+
+road.jpg
+Photographer: Johannes Plenio
+Source: https://unsplash.com/photos/302DkUawX2U
+License: https://unsplash.com/license
+
+Heebo font files
+Copyright 2014 The Heebo Project Authors.
+SIL Open Font License 1.1; see the accompanying Heebo-OFL.txt.
+Source: https://github.com/google/fonts/tree/main/ofl/heebo
+
+SVG symbols are reused unchanged from the supplied approved design.
