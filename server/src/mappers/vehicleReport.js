@@ -68,7 +68,7 @@ function yearField(raw) {
     const input = toText(raw);
 
     const value =
-        /^\d{4}/.test(input ?? "") && Number(input) >= 1000
+        /^\d{4}$/.test(input ?? "") && Number(input) >= 1000
         ? Number(input)
         : null;
 
@@ -122,7 +122,7 @@ function dateField(label, raw, precision = "day") {
     if (
         year < 1000 ||
         date.getUTCFullYear() !== year ||
-        date.getUTCMonth() !== month ||
+        date.getUTCMonth() !== month - 1 ||
         date.getUTCDate() !== day
     ) {
         return field(label, null);
@@ -134,6 +134,10 @@ function dateField(label, raw, precision = "day") {
     const value = monthOnly
         ? `${mm}/${year}`
         : `${dd}.${mm},${year}`;
+
+    const text = monthOnly
+        ? `${mm}/${year}`
+        : `${dd}.${mm}.${year}`;
 
     return field(label, value, text);
 }

@@ -43,29 +43,82 @@ function Header() {
 }
 
 function Hero({ onReportLoaded }) {
-  const [plateText, setPlateText] = useState("82020203");
+  const [plateText, setPlateText] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   const inputRef = useRef(null);
+  const searchingRef = useRef(false);
 
   async function handleSearch(event) {
     event.preventDefault();
 
+    if (searchingRef.current) return;
+
     const plate = plateText.replace(/[\s-]/g, "");
+
+    setErrorMessage("");
+    onReportLoaded(null);
+
+    if (!/^\d{7,8}$/.test(plate)) {
+      setErrorMessage("יש להזין מספר רישוי בן 7 או 8 ספרות.");
+      inputRef.current?.focus();
+      return;
+    }
+
+    searchingRef.current = true;
+    setIsLoading(true);
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 20000);
 
     try {
       const response = await fetch(
-        `/api/vehicles/${encodeURIComponent(plate)}/report`
+        `/api/vehicles/${encodeURIComponent(plate)}/report`,
+        { signal: controller.signal }
       );
 
       if (!response.ok) {
-        throw new Error("Vehicle search failed HTTP " + response.status);
+        if (response.status === 404) {
+          throw new Error("לא נמצא רכב במאגר עבור המספת שהזנת.");
+        }
+
+        if (response.status === 400) {
+          throw new Error("מספר הרישוי אינו תקין. בדוק את המספר ונסה שוב");
+        }
+
+        if (response.status === 429) {
+          throw new Error("בוצעו יותר מדי חיפושים. המתן מעט ונסה שוב.");
+        }
+        throw new Error("לא ניתן לטעון את נתוני הרכב כרגע. נסה שוב בהמשך.");
       }
 
       const result = await response.json();
 
+      if (
+        !result.data ||
+        typeof result.data !== "object" ||
+        !result.data.vehicle
+      ) {
+        throw new Error("התקבלה תשובה לא תקינה מהשרת. נסה שוב בהמשך.");
+      }
+
       onReportLoaded(result.data);
 
     } catch (error) {
-      console.log("Vehicle search failed:", error);
+      if (controller.signal.aborted) {
+        setErrorMessage("החיפוש ארך זמן רב מדי. נסה שוב.");
+      } else if (error instanceof TypeError) {
+        setErrorMessage("לא ניתן להתחבר לשרת. בדוק את החיבור ונסה שוב.");
+      } else if (error instanceof SyntaxError) {
+        setErrorMessage("התקבלה תשובה לא תקינה מהשרת. נסה שוב בהמשך.");
+      } else {
+        setErrorMessage(error.message || "החיפוש נכשל. נסה שוב.");
+      }
+    } finally {
+      clearTimeout(timeoutId);
+      searchingRef.current = false;
+      setIsLoading(false);
     }
   }
 
@@ -110,16 +163,25 @@ function Hero({ onReportLoaded }) {
                 maxLength="11"
                 ref={inputRef}
                 value={plateText}
-                onChange={(event) => setPlateText(event.target.value)}
+                onChange={(event) => {
+                  setPlateText(event.target.value);
+                  setErrorMessage("");
+                  onReportLoaded(null);
+                }}
+                disabled={isLoading}
+                aria-invalid={Boolean(errorMessage)}
+                aria-describedby={errorMessage ? "search-hint search-error" : "search-hint"}
                 placeholder="מספר הרכב שלך"
-                aria-describedby="search-hint"
                 dir="ltr"
               />
               <button
                 id="clear-search"
                 type="button"
+                disabled={isLoading}
                 onClick={() => {
                   setPlateText("");
+                  setErrorMessage("");
+                  onReportLoaded(null);
                   inputRef.current?.focus();
                 }}
                 aria-label="ניקוי מספר הרישוי"
@@ -133,14 +195,24 @@ function Hero({ onReportLoaded }) {
               <svg className="icon" aria-hidden="true">
                 <use href="#i-search" />
               </svg>
-              <span>חפש רכב</span>
+              <span>{isLoading ? "חפש רכב" : "מחפש..."}</span>
               <svg className="icon button-arrow" aria-hidden="true">
                 <use href="#i-arrow" />
               </svg>
             </button>
           </div>
           <p id="search-hint" className="search-hint">
-            תצוגת עיצוב בלבד <span>·</span> המספר והנתונים להמחשה בלבד
+            הזינו מספר רישוי בן 7 או 8 ספרות, עם או בלי מקפים.
+          </p>
+
+          {errorMessage && (
+            <p id="search-error" role="alert" style={{ color: "#b42318", margin: "12px"}}>
+              {errorMessage}
+            </p>
+          )}
+
+          <p role="status" className="sr-only">
+            {isLoading ? "מחפש נתוני רכב, נא להמתין" : ""}
           </p>
         </form>
         <div className="hero-benefits" aria-label="סוגי המידע">
