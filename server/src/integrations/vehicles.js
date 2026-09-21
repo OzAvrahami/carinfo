@@ -4,6 +4,8 @@ const RESOURCE_IDS = {
     registry: "053cea08-09bc-40ec-8f7a-156f0677aff3",
     history: "56063a99-8a3e-4ff4-912e-5966c0279bad",
     ownership: "bb2355dc-9ec7-4f06-9c3f-3344672171da",
+    specifications: "142afde2-6228-49f9-8a29-9b6c3a0cbe40",
+
 };
 
 export class InvalidPlateError extends TypeError {
@@ -84,4 +86,66 @@ export async function getOwnershipHistoryByPlate(plateNumber) {
         allRecords: true,
         sort: "baalut_dt asc, _id asc",
     });
+}
+
+export async function getVehicleSpecifications(vehicle) {
+    if (!vehicle || typeof vehicle !== "object" || Array.isArray(vehicle)) {
+        throw new Error("A vehicle record is required to look up specification.");
+    }
+
+    const filters = {
+        tozeret_cd: vehicle.tozeret_cd,
+        degem_cd: vehicle.degem_cd,
+        shnat_yitzur: vehicle.shnat_yitzur,
+        sug_degem: vehicle.sug_degem,
+    };
+
+    // Prevent a lookup with missing model identifiers.
+    if (
+        Object.values(filters).some(
+            (value) => value == null || String(value).trim() === ""
+        )
+    ) {
+        throw new Error("Vehicle registry returned incomplete model identifiers.")
+    }
+    
+    const { records }= await searchRecords({
+        resourceId: RESOURCE_IDS.specifications,
+        filters,
+        limit: 2,
+    });
+
+    if (records.length === 0) {
+        return null;
+    }
+
+    if (records.length > 1) {
+        throw new Error("Data.gob returned multiple matching vehicle models.");
+    }
+
+    const specifications = records[0];
+
+    // Verify that the returned record matches the requested identifiers.
+    if (
+        !specifications ||
+        typeof specifications !== "object" ||
+        Array.isArray(specifications) ||
+        Object.entries(filters).some(
+            ([field, value]) => String(specifications[field]) !== String(value)
+        )
+    ) {
+        throw new Error("Data.gov returned an unexpected vehicle model.");
+    }
+
+    // Compare model and trim names when both datasets provide them.
+    for (const field of ["degem_nm", "ramat_gimur"]) {
+        const expected = String(vehicle[field] ?? "").trim().toUpperCase();
+        const actual = String(specifications[field] ?? "").trim().toUpperCase();
+
+        if (expected && actual && expected !== actual) {
+            throw new Error("Vehicle model dose not match the registry: " + field + ".");
+        };
+    }
+
+    return specifications;
 }

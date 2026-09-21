@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { InvalidPlateError, getVehicleByPlate, getVehicleHistoryByPlate, getOwnershipHistoryByPlate } from "../integrations/vehicles.js";
+import { getVehicleByPlate, getVehicleHistoryByPlate, getOwnershipHistoryByPlate, getVehicleSpecifications, InvalidPlateError } from "../integrations/vehicles.js";
 
 const router = Router();
 
@@ -58,11 +58,14 @@ router.get("/:plateNumber/report", async (req, res) => {
         });
     }
 
+    const specifications = await getVehicleSpecifications(vehicle);
+
     return res.json({
         data: {
             vehicle,
             history,
             ownershipHistory,
+            specifications,
         },
     });
 });
