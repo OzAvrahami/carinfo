@@ -87,7 +87,9 @@ function plateField(raw) {
     const text = 
         value === null
         ? MISSING
-        : value.replace(/^(\d{2})(\d{3})(\d{2,3})$/, "$1-$2-$3");
+        : value.length === 8
+            ? value.replace(/^(\d{3})(\d{2})(\d{2,3})$/, "$1-$2-$3")
+            : value.replace(/^(\d{2})(\d{3})(\d{2,3})$/, "$1-$2-$3");
 
     return field("מספר רישוי", value, text);
 }
