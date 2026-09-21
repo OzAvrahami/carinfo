@@ -42,9 +42,33 @@ function Header() {
   );
 }
 
-function Hero() {
+function Hero({ onReportLoaded }) {
   const [plateText, setPlateText] = useState("82020203");
   const inputRef = useRef(null);
+
+  async function handleSearch(event) {
+    event.preventDefault();
+
+    const plate = plateText.replace(/[\s-]/g, "");
+
+    try {
+      const response = await fetch(
+        `/api/vehicles/${encodeURIComponent(plate)}/report`
+      );
+
+      if (!response.ok) {
+        throw new Error("Vehicle search failed HTTP " + response.status);
+      }
+
+      const result = await response.json();
+
+      onReportLoaded(result.data);
+
+    } catch (error) {
+      console.log("Vehicle search failed:", error);
+    }
+  }
+
   return (
     <section id="search" className="hero" aria-labelledby="hero-title">
       <div className="hero-landscape" aria-hidden="true"></div>
@@ -65,7 +89,7 @@ function Hero() {
         <p className="hero-description">
           כל הפרטים על הרכב שלך, במקום אחד. מתחילים עם מספר רישוי.
         </p>
-        <div id="search-form" className="search-form" role="group">
+        <form id="search-form" className="search-form" onSubmit={handleSearch}>
           <label htmlFor="plate-input" className="sr-only">
             מספר רישוי — 7 או 8 ספרות
           </label>
@@ -105,12 +129,7 @@ function Hero() {
                 </svg>
               </button>
             </div>
-            <button
-              className="search-button"
-              type="button"
-              aria-disabled="true"
-              aria-label="חפש רכב — המחשה בלבד, ללא חיפוש"
-            >
+            <button className="search-button" type="submit" aria-label="חפש רכב">
               <svg className="icon" aria-hidden="true">
                 <use href="#i-search" />
               </svg>
@@ -123,7 +142,7 @@ function Hero() {
           <p id="search-hint" className="search-hint">
             תצוגת עיצוב בלבד <span>·</span> המספר והנתונים להמחשה בלבד
           </p>
-        </div>
+        </form>
         <div className="hero-benefits" aria-label="סוגי המידע">
           <span>
             <svg className="icon" aria-hidden="true">
@@ -225,6 +244,8 @@ function Footer() {
 }
 
 export default function App() {
+  const [report, setReport] = useState(null);
+
   return (
     <>
       <a href="#report" className="skip-link">
@@ -232,8 +253,8 @@ export default function App() {
       </a>
       <Header />
       <main>
-        <Hero />
-        <VehicleReport />
+        <Hero onReportLoaded={setReport} />
+        {report && <VehicleReport report={report} />}
         <FAQ />
       </main>
       <Footer />

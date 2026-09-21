@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { getVehicleByPlate, getVehicleHistoryByPlate, getOwnershipHistoryByPlate, getVehicleSpecifications, InvalidPlateError } from "../integrations/vehicles.js";
+import { mapVehicleReport } from "../mappers/vehicleReport.js";
 
 const router = Router();
 
@@ -60,14 +61,14 @@ router.get("/:plateNumber/report", async (req, res) => {
 
     const specifications = await getVehicleSpecifications(vehicle);
 
-    return res.json({
-        data: {
-            vehicle,
-            history,
-            ownershipHistory,
-            specifications,
-        },
+    const report = mapVehicleReport({
+        vehicle,
+        history,
+        ownershipHistory,
+        specifications,
     });
+
+    return res.json({ data: report });
 });
 
 router.use((error, req, res, next) => {

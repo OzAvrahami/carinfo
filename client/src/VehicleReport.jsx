@@ -1,7 +1,13 @@
 import { useState } from "react";
 
-export default function VehicleReport() {
+/**
+ * @param {{ report: ReturnType<typeof import("../../server/src/mappers/vehicleReport.js").mapVehicleReport> }} props
+ */
+
+export default function VehicleReport({ report }) {
   const [activeTab, setActiveTab] = useState("overview");
+  
+  const { vehicle, history, specifications, ownershipHistory, ownershipRecordCount } = report;
 
   function handleTabKey(event) {
     // Presentation-only keyboard navigation, following the visual RTL order.
@@ -32,11 +38,11 @@ export default function VehicleReport() {
             <use href="#i-chevron-left" />
           </svg>
           <b id="breadcrumb-plate" dir="ltr">
-            820-20-203
+            {vehicle.plateNumber.text}
           </b>
         </span>
         <span className="demo-label">
-          <span></span>דוח לדוגמה
+          <span></span>נתוני משרד התחבורה
         </span>
       </div>
 
@@ -52,7 +58,7 @@ export default function VehicleReport() {
               <div className="report-title-line">
                 <h2>תיק הרכב שלך</h2>
                 <span className="report-number" dir="ltr">
-                  820-20-203
+                  {vehicle.plateNumber.text}
                 </span>
               </div>
               <p>הפרטים הקטנים. התמונה המלאה.</p>
@@ -88,9 +94,9 @@ export default function VehicleReport() {
             <div className="car-stage">
               <div className="stage-top">
                 <span className="stage-brand" dir="ltr">
-                  TOYOTA
+                  {vehicle.manufacturer.text}
                 </span>
-                <span className="body-type">רכב פנאי</span>
+                <span className="body-type">{specifications.bodyType.text}</span>
               </div>
               <div className="stage-word" aria-hidden="true" dir="ltr">
                 RAV4
@@ -110,21 +116,21 @@ export default function VehicleReport() {
               <div>
                 <span className="vehicle-eyebrow">הכירו את הרכב</span>
                 <h3 id="vehicle-title" dir="ltr">
-                  Toyota RAV4
+                  {vehicle.model.text}
                 </h3>
                 <p>
-                  טויוטה ראב 4 <span>·</span> 2024 <span>·</span> לבן
+                  {vehicle.model.text} <span>·</span> {vehicle.manufacturerYear.text} <span>·</span>{vehicle.color.text}
                 </p>
               </div>
               <span className="model-year" dir="ltr">
-                24<span>MODEL</span>
+                {vehicle.manufacturerYear.shortText}<span>MODEL</span>
               </span>
             </div>
             <div className="vehicle-plate-row">
               <span>מספר רישוי</span>
               <div className="license-plate" dir="ltr">
                 <span className="plate-country">IL</span>
-                <strong>820-20-203</strong>
+                <strong>{vehicle.plateNumber.text}</strong>
               </div>
             </div>
             <div className="vehicle-quick-specs">
@@ -132,19 +138,19 @@ export default function VehicleReport() {
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-leaf" />
                 </svg>
-                היברידי
+                {vehicle.fuelType.text}
               </span>
               <span>
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-seat" />
                 </svg>
-                5 מושבים
+                {specifications.seatCount.display}
               </span>
               <span>
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-user" />
                 </svg>
-                פרטית
+                {vehicle.currentOwnershipType.text}
               </span>
             </div>
             <div className="illustration-notice">
@@ -229,8 +235,8 @@ export default function VehicleReport() {
                       <use href="#i-car" />
                     </svg>
                   </span>
-                  <dt>יצרן</dt>
-                  <dd dir="ltr">TOYOTA</dd>
+                  <dt>{vehicle.manufacturer.label}</dt>
+                  <dd dir="ltr">{vehicle.manufacturer.text}</dd>
                 </div>
                 <div>
                   <span className="field-icon">
@@ -238,8 +244,8 @@ export default function VehicleReport() {
                       <use href="#i-layers" />
                     </svg>
                   </span>
-                  <dt>דגם</dt>
-                  <dd dir="ltr">RAV4</dd>
+                  <dt>{vehicle.model.label}</dt>
+                  <dd dir="ltr">{vehicle.model.text}</dd>
                 </div>
                 <div>
                   <span className="field-icon">
@@ -247,8 +253,8 @@ export default function VehicleReport() {
                       <use href="#i-calendar" />
                     </svg>
                   </span>
-                  <dt>שנת ייצור</dt>
-                  <dd>2024</dd>
+                  <dt>{vehicle.manufacturerYear.label}</dt>
+                  <dd>{vehicle.manufacturerYear.text}</dd>
                 </div>
                 <div>
                   <span className="field-icon">
@@ -256,8 +262,8 @@ export default function VehicleReport() {
                       <use href="#i-car" />
                     </svg>
                   </span>
-                  <dt>סוג רכב</dt>
-                  <dd>פרטי</dd>
+                  <dt>{specifications.bodyType.label}</dt>
+                  <dd>{specifications.bodyType.text}</dd>
                 </div>
                 <div>
                   <span className="field-icon">
@@ -265,8 +271,8 @@ export default function VehicleReport() {
                       <use href="#i-fuel" />
                     </svg>
                   </span>
-                  <dt>סוג דלק</dt>
-                  <dd>היברידי</dd>
+                  <dt>{vehicle.fuelType.label}</dt>
+                  <dd>{vehicle.fuelType.text}</dd>
                 </div>
                 <div>
                   <span className="field-icon">
@@ -274,9 +280,9 @@ export default function VehicleReport() {
                       <use href="#i-drop" />
                     </svg>
                   </span>
-                  <dt>צבע</dt>
+                  <dt>{vehicle.color.label}</dt>
                   <dd>
-                    <span className="color-dot" aria-hidden="true"></span>לבן
+                    <span className="color-dot" aria-hidden="true"></span>{vehicle.color.text}
                   </dd>
                 </div>
                 <div>
@@ -285,9 +291,9 @@ export default function VehicleReport() {
                       <use href="#i-seat" />
                     </svg>
                   </span>
-                  <dt>מספר מושבים</dt>
+                  <dt>{specifications.seatCount.label}</dt>
                   <dd>
-                    5 <small>מושבים</small>
+                    {specifications.seatCount.text} <small>{specifications.seatCount.unit}</small>
                   </dd>
                 </div>
                 <div>
@@ -296,9 +302,9 @@ export default function VehicleReport() {
                       <use href="#i-gauge" />
                     </svg>
                   </span>
-                  <dt>קילומטראז׳</dt>
+                  <dt>{history.lastTestMileageKm.label}</dt>
                   <dd className="missing-value">
-                    לא זמין{" "}
+                    {history.lastTestMileageKm.text}
                     <a
                       className="mileage-help"
                       href="#mileage-faq"
@@ -323,20 +329,20 @@ export default function VehicleReport() {
                   </h3>
                   <dl className="data-rows">
                     <div>
-                      <dt>תאריך רישום</dt>
-                      <dd dir="ltr">07.07.2024</dd>
+                      <dt>{history.firstRegistrationDate.label}</dt>
+                      <dd dir="ltr">{history.firstRegistrationDate.text}</dd>
                     </div>
                     <div>
-                      <dt>תוקף רישוי</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{vehicle.licenseValidUntil.label}</dt>
+                      <dd dir="ltr">{vehicle.licenseValidUntil.text}</dd>
                     </div>
                     <div>
-                      <dt>טסט אחרון</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{vehicle.lastTestDate.label}</dt>
+                      <dd dir="ltr">{vehicle.lastTestDate.text}</dd>
                     </div>
                     <div>
                       <dt>טסט הבא</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dd className="unavailable">לתקן</dd>
                     </div>
                   </dl>
                 </section>
@@ -351,22 +357,22 @@ export default function VehicleReport() {
                   </h3>
                   <dl className="data-rows">
                     <div>
-                      <dt>בעלות נוכחית</dt>
+                      <dt>{vehicle.currentOwnershipType.label}</dt>
                       <dd>
-                        <span className="ownership-pill">פרטית</span>
+                        <span className="ownership-pill">{vehicle.currentOwnershipType.text}</span>
                       </dd>
                     </div>
                     <div>
-                      <dt>בעלים קודמים</dt>
-                      <dd>0</dd>
+                      <dt>{ownershipRecordCount.label}</dt>
+                      <dd>{ownershipRecordCount.text}</dd>
                     </div>
                     <div>
                       <dt>רכב במבנה מיוחד</dt>
-                      <dd>לא</dd>
+                      <dd>לתקן</dd>
                     </div>
                     <div>
                       <dt>הורדה מהכביש</dt>
-                      <dd>לא</dd>
+                      <dd>לתקן</dd>
                     </div>
                   </dl>
                 </section>
@@ -396,20 +402,20 @@ export default function VehicleReport() {
                   </h3>
                   <dl className="data-rows">
                     <div>
-                      <dt>סוג דלק</dt>
-                      <dd>היברידי</dd>
+                      <dt>{vehicle.fuelType.label}</dt>
+                      <dd>{vehicle.fuelType.text}</dd>
                     </div>
                     <div>
-                      <dt>נפח מנוע</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{specifications.engineDisplacementCc.label}</dt>
+                      <dd>{specifications.engineDisplacementCc.text}</dd>
                     </div>
                     <div>
-                      <dt>דגם מנוע</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{vehicle.engineModel.label}</dt>
+                      <dd>{vehicle.engineModel.text}</dd>
                     </div>
                     <div>
-                      <dt>הספק</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{specifications.powerHp.label}</dt>
+                      <dd>{specifications.powerHp.text} {specifications.powerHp.unit}</dd>
                     </div>
                   </dl>
                 </section>
@@ -424,20 +430,22 @@ export default function VehicleReport() {
                   </h3>
                   <dl className="data-rows">
                     <div>
-                      <dt>מספר מושבים</dt>
-                      <dd>5</dd>
+                      <dt>{specifications.seatCount.label}</dt>
+                      <dd>
+                        {specifications.seatCount.text} <small>{specifications.seatCount.unit}</small>
+                      </dd>
                     </div>
                     <div>
-                      <dt>מידת צמיגים</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{vehicle.frontTireSize.label}</dt>
+                      <dd>{vehicle.frontTireSize.text}</dd>
                     </div>
                     <div>
-                      <dt>רמת גימור</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{vehicle.trimLevel.label}</dt>
+                      <dd>{vehicle.trimLevel.text}</dd>
                     </div>
                     <div>
-                      <dt>ארץ ייצור</dt>
-                      <dd className="unavailable">לא זמין</dd>
+                      <dt>{specifications.countryOfManufacture.label}</dt>
+                      <dd>{specifications.countryOfManufacture.text}</dd>
                     </div>
                   </dl>
                 </section>
@@ -457,64 +465,73 @@ export default function VehicleReport() {
               className="tab-panel"
               role="tabpanel"
               aria-labelledby="tab-history"
-              tabIndex="0"
+              tabIndex={0}
               hidden={activeTab !== "history"}
             >
               <div className="section-heading">
                 <h3>הדרך של הרכב</h3>
-                <span>היסטוריית בעלויות לדוגמה</span>
+                <span>היסטוריית בעלויות</span>
               </div>
               <div className="history-summary">
-                <span className="history-count">01</span>
+                <span className="history-count">{ownershipRecordCount.text}</span>
                 <div>
-                  <strong>בעלות אחת, מהרישום הראשון</strong>
-                  <p>בדוגמה זו לא מוצגים חילופי בעלות.</p>
+                  <strong>{ownershipRecordCount.label}</strong>
+                  <p>סוגי הבעלות והמועדים כפי שנמסרו במאגר.</p>
                 </div>
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-history" />
                 </svg>
               </div>
-              <ol className="ownership-timeline">
-                <li>
-                  <span className="timeline-dot" aria-hidden="true"></span>
-                  <div>
-                    <div className="timeline-heading">
-                      <h4>בעלות פרטית</h4>
-                      <span className="ownership-pill">נוכחית</span>
-                    </div>
-                    <p>
-                      <b dir="ltr">07.07.2024</b> — היום
-                    </p>
-                    <span>תאריך רישום ראשון לדוגמה</span>
-                  </div>
-                </li>
-              </ol>
+              {ownershipHistory.length > 0 ? (
+                <ol className="ownership-timeline">
+                  {ownershipHistory.map((record) => (
+                    <li key={record.id}>
+                      <span className="timeline-dot" aria-hidden="true"></span>
+                      <div>
+                        <div className="timeline-heading">
+                          <h4>{record.ownershipType.text}</h4>
+                        </div>
+
+                        <p>
+                          {record.startMonth.label}:{" "}
+                          <b dir="ltr">{record.startMonth.text}</b>
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              ) : (
+                <p>לא נמצאו רשומות בעלות במאגר עבור הרכב הזה.</p>
+              )}
+
               <div className="panel-note">
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-info" />
                 </svg>
                 <p>
-                  המידע מתייחס לסוג הבעלות ולמועדים בלבד. לא מוצגים פרטים אישיים
-                  של בעלי הרכב.
+                  המידע מתייחס לסוג הבעלות ולחודש תחילה.
+                  מספר הרשמות אינו בהכרח מספר הבעלים הקודמים.
+                  לא מוצגים פרטים אישים של בעלי הרכב.
                 </p>
               </div>
             </section>
+
             <div className="report-source">
               <div>
                 <svg className="icon" aria-hidden="true">
                   <use href="#i-database" />
                 </svg>
                 <span>
-                  תצוגת עיצוב:{" "}
-                  <a href="#faq">
-                    תוכן קבוע להמחשה{" "}
+                  מקור הנתונים:{" "}
+                  <a href="https://data.gov.il" target="_blank" rel="noopener noreferrer">
+                    משרד התחבורה - data.gov.il{" "}
                     <svg className="icon" aria-hidden="true">
                       <use href="#i-external" />
                     </svg>
                   </a>
                 </span>
               </div>
-              <span>ללא חיפוש או חיבור למאגרים</span>
+              <span>המידע מוצג כפי שנמסר במאגרים</span>
             </div>
           </div>
         </div>
