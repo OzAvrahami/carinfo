@@ -29,7 +29,7 @@ export default function VehicleReport({ report }) {
     <section
       id="report"
       className="container report-section"
-      aria-label="דוח רכב לדוגמה — תצוגת עיצוב בלבד"
+      aria-label="דוח פרטי רכב"
     >
       <div className="report-topline">
         <span>
@@ -99,7 +99,7 @@ export default function VehicleReport({ report }) {
                 <span className="body-type">{specifications.bodyType.text}</span>
               </div>
               <div className="stage-word" aria-hidden="true" dir="ltr">
-                RAV4
+                {vehicle.model.text}
               </div>
               <img
                 className="vehicle-image"
@@ -109,7 +109,9 @@ export default function VehicleReport({ report }) {
                 alt="טויוטה RAV4 לבנה — תמונת דגם להמחשה"
                 fetchPriority="high"
               />
-              <span className="image-caption">תמונת הדגם להמחשה</span>
+              <span className="image-caption">
+                תמונה להמחשה בלבד — אינה של הרכב שנבדק
+              </span>
               <div className="stage-corner" aria-hidden="true"></div>
             </div>
             <div className="vehicle-name">
@@ -158,9 +160,9 @@ export default function VehicleReport({ report }) {
                 <use href="#i-info" />
               </svg>
               <p>
-                תיק הרכב מוצג להמחשה בלבד.
+                הנתונים מוצגים כפי שנמסרו במאגרי משרד התחבורה.
                 <br />
-                הנתונים אינם תוצאת חיפוש במאגר.
+                מידע חסר מסומן כ״לא נמסר״.
               </p>
             </div>
           </aside>
@@ -457,8 +459,7 @@ export default function VehicleReport({ report }) {
                   <use href="#i-info" />
                 </svg>
                 <p>
-                  כשהמידע חסר, חשוב לדעת שהוא חסר. בדוגמה זו שדות ללא תוכן
-                  מוצגים במפורש כ״לא זמין״.
+                  שדות שלא התקבל עבורם מידע מהמאגר מוצגים כ״לא נמסר״.
                 </p>
               </div>
             </section>
