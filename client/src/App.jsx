@@ -191,11 +191,17 @@ function Hero({ onReportLoaded }) {
                 </svg>
               </button>
             </div>
-            <button className="search-button" type="submit" aria-label="חפש רכב">
+            <button
+              className="search-button"
+              type="submit"
+              disabled={isLoading}
+              aria-busy={isLoading}
+              aria-label={isLoading ? "מחפש רכב" : "חפש רכב"}
+            >
               <svg className="icon" aria-hidden="true">
                 <use href="#i-search" />
               </svg>
-              <span>{isLoading ? "חפש רכב" : "מחפש..."}</span>
+              <span>{isLoading ? "מחפש..." : "חפש רכב"}</span>
               <svg className="icon button-arrow" aria-hidden="true">
                 <use href="#i-arrow" />
               </svg>

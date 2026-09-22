@@ -254,6 +254,9 @@ export function mapVehicleReport({vehicle, history, ownershipHistory, specificat
         })),
         
         // Number of records, not number of previous owners.
-        ownershipRecordCount: numberField("מספר בעלים", ownershipHistory.length),
+        ownershipRecordCount: numberField(
+            "מספר בעלים",
+            ownershipHistory.length > 0 ? ownershipHistory.length : null
+        ),
     };
 }

@@ -476,7 +476,16 @@ export default function VehicleReport({ report }) {
                 <span>היסטוריית בעלויות</span>
               </div>
               <div className="history-summary">
-                <span className="history-count">{ownershipRecordCount.text}</span>
+                <span
+                  className="history-count"
+                  style={
+                    ownershipRecordCount.value === null
+                      ? { fontSize: "20px", color: "#64748b" }
+                      : undefined
+                  }
+                >
+                  {ownershipRecordCount.text}
+                </span>
                 <div>
                   <strong>{ownershipRecordCount.label}</strong>
                   <p>סוגי הבעלות והמועדים כפי שנמסרו במאגר.</p>
@@ -504,7 +513,16 @@ export default function VehicleReport({ report }) {
                   ))}
                 </ol>
               ) : (
-                <p>לא נמצאו רשומות בעלות במאגר עבור הרכב הזה.</p>
+                <p style={{
+                  margin: "16px 0 24px",
+                  fontSize: "14px",
+                  lineHeight: 1.8,
+                  color: "#64748b",
+                }}>
+                  אין מידע זמין על היסטוריית הבעלויות של הרכב במאגר.
+                  מאגר ההיסטוריה מוגבל לרכבים פרטיים פעילים משנת 2017 ומעלה.
+                  היעדר מידע אינו מעיד שלא היו בעלים קודמים.
+                </p>
               )}
 
               <div className="panel-note">
