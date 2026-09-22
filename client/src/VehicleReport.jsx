@@ -303,8 +303,14 @@ export default function VehicleReport({ report }) {
                     </svg>
                   </span>
                   <dt>{history.lastTestMileageKm.label}</dt>
-                  <dd className="missing-value">
-                    {history.lastTestMileageKm.text}
+                  <dd
+                    className={
+                      history.lastTestMileageKm.value === null
+                        ? "missing-value"
+                        : undefined
+                    }
+                  >
+                    {history.lastTestMileageKm.display}
                     <a
                       className="mileage-help"
                       href="#mileage-faq"
@@ -341,8 +347,8 @@ export default function VehicleReport({ report }) {
                       <dd dir="ltr">{vehicle.lastTestDate.text}</dd>
                     </div>
                     <div>
-                      <dt>טסט הבא</dt>
-                      <dd className="unavailable">לתקן</dd>
+                      <dt>{vehicle.firstRoadMonth.label}</dt>
+                      <dd dir="ltr">{vehicle.firstRoadMonth.text}</dd>
                     </div>
                   </dl>
                 </section>
@@ -367,12 +373,8 @@ export default function VehicleReport({ report }) {
                       <dd>{ownershipRecordCount.text}</dd>
                     </div>
                     <div>
-                      <dt>רכב במבנה מיוחד</dt>
-                      <dd>לתקן</dd>
-                    </div>
-                    <div>
-                      <dt>הורדה מהכביש</dt>
-                      <dd>לתקן</dd>
+                      <dt>{history.structureChanged.label}</dt>
+                      <dd>{history.structureChanged.text}</dd>
                     </div>
                   </dl>
                 </section>
@@ -407,7 +409,7 @@ export default function VehicleReport({ report }) {
                     </div>
                     <div>
                       <dt>{specifications.engineDisplacementCc.label}</dt>
-                      <dd>{specifications.engineDisplacementCc.text}</dd>
+                      <dd>{specifications.engineDisplacementCc.display}</dd>
                     </div>
                     <div>
                       <dt>{vehicle.engineModel.label}</dt>
